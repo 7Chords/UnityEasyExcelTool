@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9f594b180bd63449b6444fb780dd3a, type: 3}
+  m_Name: new TestSO
+  m_EditorClassIdentifier: 
+  age: 52
+  myName: "\u4E03\u548C\u5F26"
+  colorType: 2
+  info:
+    atk: 10
+    speed: 10
+    address: "\u5730\u72F1"
+  info_2:
+    hp: 50
+    ap: 55
+    weapon: "\u5251"
+  list: 0200000014000000
+  strings:
+  - "\u6C6A\u6C6A"
