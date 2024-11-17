@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public enum ColorType
     Blue,
     Black
 }
-[Serializable]
+[SerializeField]
 public struct TestInfo
 {
     public int atk;
@@ -44,5 +45,4 @@ public class TestSO : ScriptableObject
     public List<int> list;
 
     public string[] strings;
-
 }

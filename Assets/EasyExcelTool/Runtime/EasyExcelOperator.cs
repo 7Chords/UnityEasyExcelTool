@@ -10,11 +10,13 @@ using UnityEngine;
 
 public class EasyExcelOperator
 {
+    
+
     public static void CreateExcelByData(object dataList)
     {
         IWorkbook workbook = CreateWorkbookByData(dataList);
 
-        using (FileStream fs = new FileStream(Application.streamingAssetsPath + "/Excels/TestExcel.csv", FileMode.Create))
+        using (FileStream fs = new FileStream(Application.streamingAssetsPath + "/Excels/TestListSO.xls", FileMode.Create))
         {
             workbook.Write(fs);
         }
@@ -82,6 +84,8 @@ public class EasyExcelOperator
             }
         }
     }
+
+
 
     // Other methods for handling Excel to DataTable conversion can be added here
 

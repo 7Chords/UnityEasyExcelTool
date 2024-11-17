@@ -1,10 +1,10 @@
 {
-    "name": "EasyExcelTool_Editor",
+    "name": "EasyExcelTool.Editor",
     "rootNamespace": "",
-    "references": [],
-    "includePlatforms": [
-        "Editor"
+    "references": [
+        "GUID:6e827129a20e5894381c3c98c23e60f0"
     ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

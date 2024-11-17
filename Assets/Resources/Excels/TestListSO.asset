@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 64ec628ab1180a1449ad1347311a0730, type: 3}
-  m_Name: new TestListSO
+  m_Name: TestListSO
   m_EditorClassIdentifier: 
   soList_1:
-  - {fileID: 11400000, guid: 302e2fb0a18a82445aa5499470503c92, type: 2}
-  - {fileID: 11400000, guid: 9574fe5134021a5458f05e1a82ebde72, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
   soList_2:
-  - {fileID: 11400000, guid: 302e2fb0a18a82445aa5499470503c92, type: 2}
-  - {fileID: 11400000, guid: 9574fe5134021a5458f05e1a82ebde72, type: 2}
-  - {fileID: 11400000, guid: 87f31f570434bcf428e375b247d42595, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
