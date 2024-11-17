@@ -9,7 +9,6 @@ public class ToolTest : MonoBehaviour
     public ScriptableObject soData;
     void Start()
     {
-        EasyExcelOperator.CreateExcelByData(soData);
 
 
     }

@@ -12,11 +12,11 @@ public class EasyExcelOperator
 {
     
 
-    public static void CreateExcelByData(object dataList)
+    public static void CreateExcelByData(object dataList,string path)
     {
         IWorkbook workbook = CreateWorkbookByData(dataList);
 
-        using (FileStream fs = new FileStream(Application.streamingAssetsPath + "/Excels/TestListSO.xls", FileMode.Create))
+        using (FileStream fs = new FileStream(path, FileMode.Create))
         {
             workbook.Write(fs);
         }

@@ -10,7 +10,11 @@ public class EasyExcelToolEditor : EditorWindow
 {
     ScriptableObject sourceSO;
 
-    string excelFolderStr;
+    string createExcelFolderPath;
+
+    string selectedExcelPath;
+
+    string createSOFolderPath;
 
     //利用构造函数来设置窗口名称
     EasyExcelToolEditor()
@@ -34,19 +38,6 @@ public class EasyExcelToolEditor : EditorWindow
         GUI.skin.label.alignment = TextAnchor.MiddleCenter;
         GUILayout.Label("EasyExcelTool");
 
-        ////绘制文本
-        //GUILayout.Space(10);
-        //bugReporterName = EditorGUILayout.TextField("Bug Name", bugReporterName);
-
-        ////绘制当前正在编辑的场景
-        //GUILayout.Space(10);
-        //GUI.skin.label.fontSize = 12;
-        //GUI.skin.label.alignment = TextAnchor.UpperLeft;
-        //GUILayout.Label("Currently Scene:" + EditorSceneManager.GetActiveScene().name);
-
-        ////绘制当前时间
-        //GUILayout.Space(10);
-        //GUILayout.Label("Time:" + System.DateTime.Now);
         GUILayout.Space(10);
         GUI.skin.label.fontSize = 15;
         GUILayout.Label("----------------通过SO生成Excel---------------");
@@ -63,12 +54,12 @@ public class EasyExcelToolEditor : EditorWindow
             string folderPath = EditorUtility.OpenFolderPanel("Select Folder", "", "");
             if (!string.IsNullOrEmpty(folderPath))
             {
-                excelFolderStr = folderPath;
+                createExcelFolderPath = folderPath;
                
             }
         }
 
-        excelFolderStr = EditorGUILayout.TextField("ExcelSavePath", excelFolderStr);
+        createExcelFolderPath = EditorGUILayout.TextField("ExcelSavePath", createExcelFolderPath);
 
 
         ////绘制描述文本区域
@@ -83,12 +74,41 @@ public class EasyExcelToolEditor : EditorWindow
         //添加名为"Save Bug"按钮，用于调用SaveBug()函数
         if (GUILayout.Button("CreateExcel"))
         {
+            EasyExcelOperator.CreateExcelByData(sourceSO, createExcelFolderPath+"/"+ sourceSO.name+".xls");
         }
+
+
 
         GUILayout.Space(10);
         GUILayout.Label("----------------通过Excel生成SO---------------");
+        GUILayout.Space(10);
+        if (GUILayout.Button("Select Excel File（The folder must exit in current project)"))
+        {
+            string[] fliter = { "Excel文件", "xls;*.xlsx" };
+            string excelPath = EditorUtility.OpenFilePanelWithFilters("Select Excel", "", fliter);
+            if (!string.IsNullOrEmpty(excelPath))
+            {
+                selectedExcelPath = excelPath;
 
-        //添加名为"Save Bug with Screenshot"按钮，用于调用SaveBugWithScreenshot() 函数
+            }
+        }
+
+        selectedExcelPath = EditorGUILayout.TextField("ExcelSelectedPath", selectedExcelPath);
+
+
+
+        if (GUILayout.Button("Select SO Folder（The folder must exit in current project)"))
+        {
+            string folderPath = EditorUtility.OpenFolderPanel("Select Folder", "", "");
+            if (!string.IsNullOrEmpty(folderPath))
+            {
+                createSOFolderPath = folderPath;
+
+            }
+        }
+        createSOFolderPath = EditorGUILayout.TextField("CreateSOFolderPath", createSOFolderPath);
+
+
         if (GUILayout.Button("CreateSO"))
         {
             //SaveBugWithScreenshot();
