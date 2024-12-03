@@ -13,9 +13,6 @@ MonoBehaviour:
   m_Name: TestListSO
   m_EditorClassIdentifier: 
   soList_1:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 302e2fb0a18a82445aa5499470503c92, type: 2}
   soList_2:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 9574fe5134021a5458f05e1a82ebde72, type: 2}

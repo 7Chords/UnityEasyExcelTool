@@ -1,14 +1,19 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using UnityEditor.VersionControl;
 using UnityEngine;
 [CreateAssetMenu(fileName = "new TestListSO", menuName = "EasyExcelToolTest/TestListSO")]
-[EasyExcelUsage]
+[EasyExcelUsage(excelName = "TestListSO")]
+[Serializable]
 public class TestListSO : ScriptableObject
 {
 
     public List<TestSO> soList_1;
 
     public List<TestSO> soList_2;
+
+    //public List<Info> list_1;
+
+    //public List<Info> list_2;
+
 
 }

@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Unity.Plastic.Newtonsoft.Json;
-using UnityEngine;
+using UnityEditor;
 
 public class EasyExcelOperator
 {
-    
-
+   
     public static void CreateExcelByData(object dataList,string path)
     {
         IWorkbook workbook = CreateWorkbookByData(dataList);
@@ -20,7 +19,9 @@ public class EasyExcelOperator
         {
             workbook.Write(fs);
         }
+        AssetDatabase.Refresh();
     }
+
     private static IWorkbook CreateWorkbookByData(object dataLists)
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -66,6 +67,8 @@ public class EasyExcelOperator
 
         return workbook;
     }
+
+
     private static void SetRowOfWorkbook(ref HSSFWorkbook workbook, object singleData, int sheet, int row)
     {
         FieldInfo[] fieldInfos = singleData.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);

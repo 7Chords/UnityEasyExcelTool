@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
+using NPOI.SS.Formula.PTG;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
@@ -27,11 +28,25 @@ public class EasyExcelImporter : AssetPostprocessor
 {
 
     static List<EasyExcelAssetInfo> cachedAssetInfos = null;
+
+    static string[] s_importedAssets, s_deletedAssets, s_movedAssets, s_movedFromAssetPath;
     static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
-        bool hasImported = false;
+        s_importedAssets = importedAssets;
+        s_deletedAssets = deletedAssets;
+        s_movedAssets = movedAssets;
+        s_movedFromAssetPath = movedFromAssetPaths;
+    }
 
-        foreach (string path in importedAssets)
+    public static void ImportAllExcels()
+    {
+        bool hasImported = false;
+        if(s_importedAssets==null)
+        {
+            Debug.LogError("ImportAssets is Null！");
+            return;
+        }
+        foreach (string path in s_importedAssets)
         {
             //找到所有的excel文件
             if (Path.GetExtension(path) == ".xls" || Path.GetExtension(path) == ".xlsx")
@@ -40,7 +55,6 @@ public class EasyExcelImporter : AssetPostprocessor
                 {
                     cachedAssetInfos = FindExcelAssetInfos();
                 }
-
                 string excelName = Path.GetFileNameWithoutExtension(path);
 
                 if (excelName.StartsWith("~$"))
@@ -58,9 +72,54 @@ public class EasyExcelImporter : AssetPostprocessor
                 ImportExcel(path, info);
 
                 hasImported = true;
+
             }
         }
 
+        if (hasImported) //有导入新的excel数据就进行刷新
+        {
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+    }
+    public static void ImportSingleExcel(string importedAsset,string createSOPath)
+    {
+        bool hasImported = false;
+        //找到所有的excel文件
+        if (Path.GetExtension(importedAsset) == ".xls" || Path.GetExtension(importedAsset) == ".xlsx")
+        {
+            if (cachedAssetInfos == null)
+            {
+                cachedAssetInfos = FindExcelAssetInfos();
+            }
+            string excelName = Path.GetFileNameWithoutExtension(importedAsset);
+
+            if (excelName.StartsWith("~$"))
+            {
+                return;
+            }
+
+
+            EasyExcelAssetInfo info = cachedAssetInfos.Find(i => i.ExcelName == excelName);
+
+
+            Debug.Log(cachedAssetInfos[0].ExcelName);
+            Debug.Log(excelName);
+
+            
+
+            if (info == null)
+            {
+                return;
+            }
+
+            ImportExcel(importedAsset, info, createSOPath);
+
+            Debug.Log("import");
+
+            hasImported = true;
+
+        }
         if (hasImported) //有导入新的excel数据就进行刷新
         {
             AssetDatabase.SaveAssets();
@@ -109,40 +168,60 @@ public class EasyExcelImporter : AssetPostprocessor
     {
         Directory.CreateDirectory(Path.GetDirectoryName(assetPath));
 
+        // 加载现有资产
         var asset = AssetDatabase.LoadAssetAtPath(assetPath, assetType);
 
-        //不存在这个type的SO
+        // 如果不存在这个类型的 SO
         if (asset == null)
         {
-            asset = ScriptableObject.CreateInstance(assetType.Name);
-            //test
-            assetPath = "Assets/Resources/Excels/TestListSO.asset";
+            // 检查 assetType 是否为 ScriptableObject 的子类
+            if (!typeof(ScriptableObject).IsAssignableFrom(assetType))
+            {
+                Debug.LogError($"Type {assetType} is not a ScriptableObject.");
+                return null; // 或者你可以选择抛出异常
+            }
 
-            AssetDatabase.CreateAsset((ScriptableObject)asset, assetPath);
-            //asset.hideFlags = HideFlags.NotEditable;//
+            // 创建该类型的实例
+            asset = ScriptableObject.CreateInstance(assetType);
+
+            // 确保 assetPath 以 .asset 结尾
+            if (!assetPath.EndsWith(".asset"))
+            {
+                assetPath += ".asset";
+            }
+
+            AssetDatabase.CreateAsset(asset, assetPath);
+            EditorUtility.SetDirty(asset); // 确保资产被标记为已修改
         }
 
         return asset;
     }
-
-    static void ImportExcel(string excelPath, EasyExcelAssetInfo info)
+    static void ImportExcel(string excelPath, EasyExcelAssetInfo info,string createSOPath="")
     {
         string assetPath = "";
-
-        string assetName = info.AssetType.Name + ".asset";
-
-        if (string.IsNullOrEmpty(info.attribute.assetPath))
+        if (!string.IsNullOrEmpty(createSOPath))
         {
-            string basePath = Path.GetDirectoryName(excelPath);
-            assetPath = Path.Combine(basePath, assetName);
+            assetPath = createSOPath;
         }
         else
         {
-            var path = Path.Combine("Assets", info.attribute.assetPath);
-            assetPath = Path.Combine(path, assetName);
+            string assetName = info.AssetType.Name + ".asset";
+
+            if (string.IsNullOrEmpty(info.attribute.assetPath))
+            {
+                string basePath = Path.GetDirectoryName(excelPath);
+                assetPath = Path.Combine(basePath, assetName);
+            }
+            else
+            {
+                var path = Path.Combine("Assets", info.attribute.assetPath);
+                assetPath = Path.Combine(path, assetName);
+            }
         }
-        Debug.Log(assetPath);
+
         UnityEngine.Object asset = LoadOrCreateAsset(assetPath, info.AssetType);
+
+        Debug.Log(assetPath);
 
         IWorkbook book = LoadBook(excelPath);
 
@@ -167,9 +246,7 @@ public class EasyExcelImporter : AssetPostprocessor
                     {
                         IRow row = sheet.GetRow(i);
                         if (row == null) continue;
-
-                        var obj = Activator.CreateInstance(elementType);
-
+                        var obj = ScriptableObject.CreateInstance(elementType);
                         FieldInfo[] fields = elementType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                         for (int j = 0; j < fields.Length; j++)
                         {

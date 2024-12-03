@@ -1,11 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using System.IO;
-using UnityEditor.SceneManagement;
-using UnityEngine.WSA;
-using UnityEditor.VersionControl;
-
-
 public class EasyExcelToolEditor : EditorWindow
 {
     ScriptableObject sourceSO;
@@ -24,7 +18,7 @@ public class EasyExcelToolEditor : EditorWindow
 
     //添加菜单栏用于打开窗口
     [MenuItem("Tool/EasyExcelTool")]
-    static void showWindow()
+    static void ShowEasyExcelToolWindow()
     {
         EditorWindow.GetWindow(typeof(EasyExcelToolEditor));
     }
@@ -55,26 +49,18 @@ public class EasyExcelToolEditor : EditorWindow
             if (!string.IsNullOrEmpty(folderPath))
             {
                 createExcelFolderPath = folderPath;
-               
             }
         }
 
         createExcelFolderPath = EditorGUILayout.TextField("ExcelSavePath", createExcelFolderPath);
 
 
-        ////绘制描述文本区域
-        //GUILayout.Space(10);
-        //GUILayout.BeginHorizontal();
-        //GUILayout.Label("Description", GUILayout.MaxWidth(80));
-        //description = EditorGUILayout.TextArea(description, GUILayout.MaxHeight(75));
-        //GUILayout.EndHorizontal();
-
         EditorGUILayout.Space();
 
-        //添加名为"Save Bug"按钮，用于调用SaveBug()函数
+        //创建Excel文件按钮
         if (GUILayout.Button("CreateExcel"))
         {
-            EasyExcelOperator.CreateExcelByData(sourceSO, createExcelFolderPath+"/"+ sourceSO.name+".xls");
+            EasyExcelOperator.CreateExcelByData(sourceSO, createExcelFolderPath + "/" + sourceSO.name + ".xls");
         }
 
 
@@ -82,6 +68,11 @@ public class EasyExcelToolEditor : EditorWindow
         GUILayout.Space(10);
         GUILayout.Label("----------------通过Excel生成SO---------------");
         GUILayout.Space(10);
+        GUI.skin.label.fontSize = 15;
+        GUILayout.Label("----------------单个Excel操作---------------");
+        GUI.skin.label.fontSize = 9;
+        GUILayout.Label("(Excel文件尽量不要放在StreamingAssets文件夹中，统一导入时由于该文件夹无法写入，会出错)");
+
         if (GUILayout.Button("Select Excel File（The folder must exit in current project)"))
         {
             string[] fliter = { "Excel文件", "xls;*.xlsx" };
@@ -106,12 +97,22 @@ public class EasyExcelToolEditor : EditorWindow
 
             }
         }
-        createSOFolderPath = EditorGUILayout.TextField("CreateSOFolderPath", createSOFolderPath);
+        createSOFolderPath = EditorGUILayout.TextField("SOFolderPath", createSOFolderPath);
 
 
-        if (GUILayout.Button("CreateSO"))
+        if (GUILayout.Button("CreateSO/RefreshSO"))
         {
-            //SaveBugWithScreenshot();
+            EasyExcelImporter.ImportSingleExcel(selectedExcelPath, "Assets/"+createSOFolderPath.Split("Assets/")[1]);
+        }
+
+
+        GUILayout.Space(10);
+        GUI.skin.label.fontSize = 15;
+        GUILayout.Label("----------------所有Excel操作---------------");
+
+        if (GUILayout.Button("CreateAllSO/RefreshAllSO"))
+        {
+            EasyExcelImporter.ImportAllExcels();
         }
 
         GUILayout.EndVertical();
