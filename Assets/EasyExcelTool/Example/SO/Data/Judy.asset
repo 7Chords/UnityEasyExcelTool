@@ -10,19 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb9f594b180bd63449b6444fb780dd3a, type: 3}
-  m_Name: new TestSO
+  m_Name: Judy
   m_EditorClassIdentifier: 
-  age: 52
-  myName: "\u4E03\u548C\u5F26"
-  colorType: 2
-  info:
-    atk: 10
-    speed: 10
-    address: "\u5730\u72F1"
-  info_2:
-    hp: 50
-    ap: 55
-    weapon: "\u5251"
-  list: 0200000014000000
-  strings:
-  - "\u6C6A\u6C6A"
+  characterName: Judy
+  characterClass: 2
+  equipedWeapon:
+    weaponName: Cat Bow
+    atkDamage: 20
+    criticalChance: 0.2
+  friendNames:
+  - Tom
+  - Jerry
+  - KangKang
+  characterBag:
+  - itemName: Sliver Key
+    itemAmount: 2
+  - itemName: Spped Shoes
+    itemAmount: 2

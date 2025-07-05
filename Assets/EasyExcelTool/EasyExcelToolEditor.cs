@@ -60,7 +60,7 @@ public class EasyExcelToolEditor : EditorWindow
         //创建Excel文件按钮
         if (GUILayout.Button("CreateExcel"))
         {
-            EasyExcelOperator.CreateExcelByData(sourceSO, createExcelFolderPath + "/" + sourceSO.name + ".xls");
+            EasyExcelOperator.CreateExcelByData(sourceSO, createExcelFolderPath + "/" + sourceSO.name + ".xls",AssetDatabase.GetAssetPath(sourceSO));
         }
 
 
@@ -102,7 +102,15 @@ public class EasyExcelToolEditor : EditorWindow
 
         if (GUILayout.Button("CreateSO/RefreshSO"))
         {
-            EasyExcelImporter.ImportSingleExcel(selectedExcelPath, "Assets/"+createSOFolderPath.Split("Assets/")[1]);
+            if (createSOFolderPath != "")
+            {
+                EasyExcelImporter.ImportSingleExcel(selectedExcelPath, "Assets/" + createSOFolderPath.Split("Assets/")[1]);
+            }
+            else
+            {
+                EasyExcelImporter.ImportSingleExcel(selectedExcelPath, "");
+
+            }
         }
 
 

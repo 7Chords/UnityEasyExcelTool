@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
-using NPOI.SS.Formula.PTG;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
@@ -24,38 +23,28 @@ class EasyExcelAssetInfo
         private set { }
     }
 }
-public class EasyExcelImporter : AssetPostprocessor
+public class EasyExcelImporter
 {
 
     static List<EasyExcelAssetInfo> cachedAssetInfos = null;
 
-    static string[] s_importedAssets, s_deletedAssets, s_movedAssets, s_movedFromAssetPath;
-    static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
-    {
-        s_importedAssets = importedAssets;
-        s_deletedAssets = deletedAssets;
-        s_movedAssets = movedAssets;
-        s_movedFromAssetPath = movedFromAssetPaths;
-    }
 
     public static void ImportAllExcels()
     {
         bool hasImported = false;
-        if(s_importedAssets==null)
+        DirectoryInfo direction = new DirectoryInfo(Application.dataPath);//获取文件夹，exportPath是文件夹的路径
+        FileInfo[] files = direction.GetFiles("*", SearchOption.AllDirectories);
+
+
+        for(int i =0;i<files.Length; i++)
         {
-            Debug.LogError("ImportAssets is Null！");
-            return;
-        }
-        foreach (string path in s_importedAssets)
-        {
-            //找到所有的excel文件
-            if (Path.GetExtension(path) == ".xls" || Path.GetExtension(path) == ".xlsx")
+            if (Path.GetExtension(files[i].FullName) == ".xls" || Path.GetExtension(files[i].FullName) == ".xlsx")
             {
                 if (cachedAssetInfos == null)
                 {
                     cachedAssetInfos = FindExcelAssetInfos();
                 }
-                string excelName = Path.GetFileNameWithoutExtension(path);
+                string excelName = Path.GetFileNameWithoutExtension(files[i].FullName);
 
                 if (excelName.StartsWith("~$"))
                 {
@@ -69,10 +58,9 @@ public class EasyExcelImporter : AssetPostprocessor
                     continue;
                 }
 
-                ImportExcel(path, info);
+                ImportExcel(files[i].FullName, info);
 
                 hasImported = true;
-
             }
         }
 
@@ -85,6 +73,7 @@ public class EasyExcelImporter : AssetPostprocessor
     public static void ImportSingleExcel(string importedAsset,string createSOPath)
     {
         bool hasImported = false;
+
         //找到所有的excel文件
         if (Path.GetExtension(importedAsset) == ".xls" || Path.GetExtension(importedAsset) == ".xlsx")
         {
@@ -180,10 +169,11 @@ public class EasyExcelImporter : AssetPostprocessor
                 Debug.LogError($"Type {assetType} is not a ScriptableObject.");
                 return null; // 或者你可以选择抛出异常
             }
-
             // 创建该类型的实例
             asset = ScriptableObject.CreateInstance(assetType);
-
+            //更新特性？
+            Debug.Log("create");
+            cachedAssetInfos.Find(x => x.AssetType == assetType).attribute.assetPath = assetPath;
             // 确保 assetPath 以 .asset 结尾
             if (!assetPath.EndsWith(".asset"))
             {
@@ -199,9 +189,9 @@ public class EasyExcelImporter : AssetPostprocessor
     static void ImportExcel(string excelPath, EasyExcelAssetInfo info,string createSOPath="")
     {
         string assetPath = "";
-        if (!string.IsNullOrEmpty(createSOPath))
+        if (!string.IsNullOrEmpty(createSOPath) )
         {
-            assetPath = createSOPath;
+            assetPath = Path.Combine(createSOPath, info.AssetType.Name + ".asset");
         }
         else
         {
@@ -214,8 +204,7 @@ public class EasyExcelImporter : AssetPostprocessor
             }
             else
             {
-                var path = Path.Combine("Assets", info.attribute.assetPath);
-                assetPath = Path.Combine(path, assetName);
+                assetPath = info.attribute.assetPath;
             }
         }
 
@@ -262,36 +251,6 @@ public class EasyExcelImporter : AssetPostprocessor
                             var genericDeserialize = deserializeMethod.MakeGenericMethod(fields[j].FieldType);
                             var fieldValue = genericDeserialize.Invoke(null, new object[] { cellValue });
                             fields[j].SetValue(obj, fieldValue);
-
-                            //if (fields[j].FieldType.IsEnum)
-                            //{
-                            //    // 尝试将 cellValue 直接转换为枚举类型
-                            //    if (Enum.TryParse(fields[j].FieldType, cellValue, out object enumValue))
-                            //    {
-                            //        fields[j].SetValue(obj, enumValue);
-                            //    }
-                            //    else
-                            //    {
-                            //        // 如果转换失败，您可以根据需要抛出异常或设置默认值
-                            //        throw new ArgumentException($"Invalid enum value '{cellValue}' for field {fields[j].Name}");
-                            //    }
-                            //}
-                            //else if(fields[j].FieldType==typeof(Int32))
-                            //{
-                            //    int temp = Convert.ToInt32(JsonConvert.DeserializeObject(cellValue));
-                            //    fields[j].SetValue(obj, temp);
-                            //}
-                            //else
-                            //{
-                            //    // 使用 JSON 反序列化对字段进行赋值
-                            //    var deserializeMethod = typeof(JsonConvert).GetMethods()
-                            //        .Where(m => m.Name == "DeserializeObject" && m.IsGenericMethodDefinition)
-                            //        .FirstOrDefault();
-
-                            //    var genericDeserialize = deserializeMethod.MakeGenericMethod(fields[j].FieldType);
-                            //    var fieldValue = genericDeserialize.Invoke(null, new object[] { cellValue });
-                            //    fields[j].SetValue(obj, fieldValue);
-                            //}
 
                         }
                         MethodInfo listAddMethod = list.GetType().GetMethod("Add", new Type[] { elementType });

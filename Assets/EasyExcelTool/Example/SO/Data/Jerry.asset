@@ -10,20 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb9f594b180bd63449b6444fb780dd3a, type: 3}
-  m_Name: new TestSO 2
+  m_Name: Jerry
   m_EditorClassIdentifier: 
-  age: 1
-  myName: hahha
-  colorType: 0
-  info:
-    atk: 44
-    speed: 5
-    address: "\u4EBA\u95F42"
-  info_2:
-    hp: 22
-    ap: 10
-    weapon: "\u6CD5\u5178"
-  list: 37000000
-  strings:
-  - "\u563B\u563B\u54C8\u54C8"
-  - "\u53FD\u91CC\u5471\u5566"
+  characterName: Jerry
+  characterClass: 0
+  equipedWeapon:
+    weaponName: Dragon Sword
+    atkDamage: 150
+    criticalChance: 0.5
+  friendNames:
+  - Judy
+  - Kitty
+  characterBag:
+  - itemName: Health Potion
+    itemAmount: 10
+  - itemName: Magic Potion
+    itemAmount: 6
+  - itemName: Golden Key
+    itemAmount: 1

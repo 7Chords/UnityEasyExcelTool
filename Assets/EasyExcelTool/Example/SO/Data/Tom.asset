@@ -10,22 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb9f594b180bd63449b6444fb780dd3a, type: 3}
-  m_Name: new TestSO 1
+  m_Name: Tom
   m_EditorClassIdentifier: 
-  age: 30
-  myName: "\u559C\u559C"
-  colorType: 1
-  info:
-    atk: 89
-    speed: 77
-    address: "\u5929\u5802s"
-  info_2:
-    hp: 100
-    ap: 25
-    weapon: "\u5200"
-  list: 020000000500000006000000
-  strings:
-  - "\u62C9\u62C9"
-  - "\u54C8\u54C8"
-  - "\u560E\u560E"
-  - "\u5361\u5751"
+  characterName: Tom
+  characterClass: 1
+  equipedWeapon:
+    weaponName: Knife
+    atkDamage: 25
+    criticalChance: 0.8
+  friendNames:
+  - KangKang
+  characterBag:
+  - itemName: Health Potion
+    itemAmount: 20
+  - itemName: Spped Shoes
+    itemAmount: 5

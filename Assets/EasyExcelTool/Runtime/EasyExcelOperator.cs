@@ -1,27 +1,44 @@
+using Codice.CM.Common;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
+using UnityEngine.Networking.Types;
 
 public class EasyExcelOperator
 {
    
-    public static void CreateExcelByData(object dataList,string path)
+    public static void CreateExcelByData(object dataList,string excelPaht,string assetPath)
     {
         IWorkbook workbook = CreateWorkbookByData(dataList);
 
-        using (FileStream fs = new FileStream(path, FileMode.Create))
+        using (FileStream fs = new FileStream(excelPaht, FileMode.Create))
         {
             workbook.Write(fs);
         }
+
+        //Type type = dataList.GetType();
+
+        //usageAttribute
+
+        //usageAttribute.assetPath = assetPath;
+
+
+        //foreach (Object attributes in type.GetCustomAttributes(false))
+        //{
+        //    EasyExcelUsageAttribute dbi = (EasyExcelUsageAttribute)attributes;//Ç¿ÖÆ×ª»»
+        //    dbi.assetPath = assetPath;
+        //}
+
         AssetDatabase.Refresh();
     }
-
+    
     private static IWorkbook CreateWorkbookByData(object dataLists)
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
